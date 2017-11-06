@@ -1,0 +1,127 @@
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="main.css">
+  </head>
+  <body>
+    <img id="picture" src="background.png">
+
+    <button id="choose">
+      Choose
+    </button>
+
+    <div id="players">
+      <span id="team-one">
+        <p class="label">Team One</p>
+        <p id="player-one"></p>
+      </span>
+      <!--<span id="team-two">
+        <p class="label">Team Two</p>
+        <p id="player-two"></p>
+      </span>
+      <span id="team-three">
+        <p class="label">Team Three</p>
+        <p id="player-three"></p>
+      </span>-->
+    </div>
+
+    <div id="question">
+      <span><p class="label">Question Number</p><p id="question-number"></p></span>
+    </div>
+
+    <script>
+    var teamOne = ["Nathan","Set", "Will", "John", "Chandler", "Burhanddin", "Mardhi","Madeline"];
+    var teamTwo = [""];
+    var teamThree = [""];
+    var questions = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+    var timer = null;
+    var timerCount = 0;
+
+    $("#choose").on("click", chooseQuestion);
+
+    function chooseQuestion() {
+    	// if we have a timer already started, return
+    	if (timer !== null) {
+      	return;
+      }
+      // if there are no more questions, return
+    	if (questions.length === 0) {
+      	alert("No more questions!");
+        return;
+      }
+      // remove the players from last time
+      var teamOneMember = $("#player-one").text();
+      var teamTwoMember = $("#player-two").text();
+      var teamThreeMember = $("#player-three").text();
+      if (teamOneMember !== "" && teamTwoMember !== "" && teamThreeMember !== "") {
+        teamOne = deleteItem(teamOne, teamOneMember);
+        teamTwo = deleteItem(teamTwo, teamTwoMember);
+        teamThree = deleteItem(teamThree, teamThreeMember);
+      }
+      if (teamOne.length === 0 || teamTwo.length === 0 || teamThree.length === 0) {
+        alert("No more team members!");
+        return;
+      }
+      // clear the question
+      $("#question-number").text("");
+      timerCount = 0;
+      timer = setInterval(function() {
+      	// after our timer has completed X cycles, stop, and choose them for real
+      	if (timerCount >= 40) {
+        	// stop the timer
+        	clearInterval(timer);
+          // pick the question (and team members) for real
+          decideQuestion();
+          // set the timer to null to allow the button to be clicked again
+          timer = null;
+          // reset the timer to 0
+          timerCount = 0;
+          return;
+        }
+    		pickPlayers();
+      	timerCount++;
+      }, 100);
+    }
+
+    // picks a random player from each team and displays it on screen
+    function pickPlayers() {
+      // pick a random team one member
+      var randomTeamOneMember = getRandomItem(teamOne);
+      // pick a random team two member
+      var randomTeamTwoMember = getRandomItem(teamTwo);
+      var randomTeamThreeMember = getRandomItem(teamThree);
+      // display the selected team one member
+      $("#player-one").text(randomTeamOneMember);
+      // display the selected team two member
+      $("#player-two").text(randomTeamTwoMember);
+      $("#player-three").text(randomTeamThreeMember);
+    }
+
+    // gets called after the timer is over and we choose players and questions for real
+    function decideQuestion() {
+    	pickPlayers();
+      // pick a random question
+      var randomQuestion = getRandomInt(0, questions.length - 1);
+      // display the selected question
+      $("#question-number").text(questions[randomQuestion]);
+      // remove the random question
+      questions.splice(randomQuestion, 1);
+    }
+
+    function getRandomInt(min, max) {
+    	return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function getRandomItem(arr) {
+    	var index = getRandomInt(0, arr.length - 1);
+      return arr[index];
+    }
+
+    function deleteItem(arr, needle) {
+      return arr.filter(function(item) {
+        return (item !== needle);
+      });
+    }
+    </script>
+  </body>
+</html>
